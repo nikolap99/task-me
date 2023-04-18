@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './NewSprint.module.scss';
 import { Task, TaskItem, TaskPriority } from '../../components/TaskItem';
 import { TextField } from '../../components/TextField';
+import axios from 'axios';
 
 const NewSprint = () => {
   // fetch tasks
@@ -64,8 +65,16 @@ const NewSprint = () => {
     fetchTasks();
   }, []);
 
-  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const response = await axios.post("http://localhost:8000/server.php", {
+      name: "Nikola",
+    }, {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    console.log({ response });
   }
 
   const updateSprintName = (name: string) => {
