@@ -14,6 +14,7 @@ const Home = () => {
     setIsLoadingTasks(true);
     const newTasks = [
       {
+        id: "1",
         title: "Task 1",
         description: "Do something!",
         priority: TaskPriority.HIGH,
@@ -21,15 +22,25 @@ const Home = () => {
         asignee: "Nikola",
       },
       {
+        id: "2",
         title: "Task 2",
         description: "Do something!",
-        priority: TaskPriority.HIGH,
+        priority: TaskPriority.MEDIUM,
         estimate: 1,
         asignee: "Nikola",
       },
       {
+        id: "3",
         title: "Task 3",
         description: "Do something!",
+      },
+      {
+        id: "4",
+        title: "Task 4",
+        description: "Do something!",
+        priority: TaskPriority.LOW,
+        estimate: 1,
+        asignee: "Nikola",
       },
     ];
     setTimeout(() => {
@@ -42,16 +53,19 @@ const Home = () => {
     setIsLoadingSprints(true);
     const newSprints = [
       {
+        id: "1",
         title: "APR Sprint 22-27",
         startDate: 'Apr 22 2023',
         endDate: 'Apr 27 2023',
       },
       {
+        id: "2",
         title: "APR Sprint 15-22",
         startDate: 'Apr 15 2023',
         endDate: 'Apr 22 2023',
       },
       {
+        id: "3",
         title: "APR Sprint 08-15",
         startDate: 'Apr 08 2023',
         endDate: 'Apr 15 2023',
@@ -74,16 +88,16 @@ const Home = () => {
       <div>
         {isLoadingTasks && "Loading tasks..."}
         {!isLoadingTasks && tasks.length === 0 && "No tasks."}
-        {!isLoadingTasks && tasks.length > 0 && tasks.map(task => <TaskItem key={task.title} {...task} />)}
+        {!isLoadingTasks && tasks.length > 0 && tasks.map(task => <TaskItem key={task.id} {...task} />)}
       </div>
       <h2>All Sprints</h2>
       <div>
         {isLoadingSprints && "Loading sprints..."}
         {!isLoadingSprints && sprints.length === 0 && "No sprints."}
-        {!isLoadingSprints && sprints.length > 0 && sprints.map(sprint => <SprintItem key={sprint.title} {...sprint} />)}
+        {!isLoadingSprints && sprints.length > 0 && sprints.map(sprint => <SprintItem key={sprint.id} {...sprint} />)}
       </div>
     </div>
   );
 }
 
-export default Home;
+export { Home };

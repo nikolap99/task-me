@@ -1,0 +1,57 @@
+.CardContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5rem;
+  min-height: 100vh;
+}
+.Card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  width: 50%;
+  border-radius: 10px;
+  background-color: #333;
+
+  &_Fields {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  &_Button {
+    width: 200px;
+    margin: 0 auto;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #4834d4;
+    color: #fff;
+    transition: all 0.3s;
+
+    &:hover {
+      cursor: pointer;
+      background-color: #5741e0;
+    }
+
+    &_Disabled {
+      width: 200px;
+      margin: 0 auto;
+      padding: 0.5rem;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      background-color: #7465d8;
+      color: #999;
+      cursor: not-allowed;
+    }
+  }
+}

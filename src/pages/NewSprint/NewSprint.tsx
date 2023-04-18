@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import styles from './NewSprint.module.scss';
 import { Task, TaskItem, TaskPriority } from '../../components/TaskItem';
+import { TextField } from '../../components/TextField';
 
 const NewSprint = () => {
   // fetch tasks
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
+
+  const [sprintName, setSprintName] = useState("");
 
   const [checkedTaskIds, setCheckedTaskIds] = useState<string[]>([]);
   const [isFormValid, setIsFormValid] = useState(false);
@@ -19,7 +22,7 @@ const NewSprint = () => {
     }
     setCheckedTaskIds(newCheckedTaskIds);
 
-    if(newCheckedTaskIds.length > 0) {
+    if(newCheckedTaskIds.length > 0 && sprintName) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
@@ -30,6 +33,7 @@ const NewSprint = () => {
     setIsLoadingTasks(true);
     const newTasks = [
       {
+        id: "1",
         title: "Task 1",
         description: "Do something!",
         priority: TaskPriority.HIGH,
@@ -37,6 +41,7 @@ const NewSprint = () => {
         asignee: "Nikola",
       },
       {
+        id: "2",
         title: "Task 2",
         description: "Do something!",
         priority: TaskPriority.HIGH,
@@ -44,6 +49,7 @@ const NewSprint = () => {
         asignee: "Nikola",
       },
       {
+        id: "3",
         title: "Task 3",
         description: "Do something!",
       },
@@ -58,9 +64,25 @@ const NewSprint = () => {
     fetchTasks();
   }, []);
 
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  }
+
+  const updateSprintName = (name: string) => {
+    setSprintName(name);
+    if (checkedTaskIds.length > 0 && name) {
+      setIsFormValid(true);
+    } else {
+      setIsFormValid(false);
+    }
+  }
+
   return (
-    <form className={styles.NewSprint}>
+    <form className={styles.NewSprint} onSubmit={(e) => submitForm(e)}>
       <h2>Create New Sprint</h2>
+      {!isLoadingTasks && tasks.length > 0 && (
+        <TextField placeholder='Sprint name...' onChange={updateSprintName} value={sprintName} />
+      )}
       <div>
         {isLoadingTasks && "Loading tasks..."}
         {!isLoadingTasks && tasks.length === 0 && "No tasks."}
@@ -72,22 +94,15 @@ const NewSprint = () => {
         ))}
       </div>
       {!isLoadingTasks && tasks.length > 0 && (
-        <>
-          <input
-            type='text'
-            placeholder='Sprint name...'
-            className={styles.NewSprint_NameInput}
-          />
-          <button 
-            className={isFormValid ? styles.NewSprint_Button : styles.NewSprint_Button_Disabled}
-            type='submit'
-          >
-            Create Sprint
-          </button>
-        </>
+        <button 
+          className={isFormValid ? styles.NewSprint_Button : styles.NewSprint_Button_Disabled}
+          type='submit'
+        >
+          Create Sprint
+        </button>
       )}
     </form>
   );
 }
 
-export default NewSprint;
+export { NewSprint };
