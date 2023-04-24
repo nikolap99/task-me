@@ -1,11 +1,13 @@
 import styles from './Header.module.scss';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const logout = () => {
-    alert("Logout!");
+    localStorage.setItem("auth_token", "");
+    navigate("/login");
   };
 
   const links = [

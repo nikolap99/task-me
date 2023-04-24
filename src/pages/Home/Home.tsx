@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import styles from './Home.module.scss';
 import { Sprint, SprintItem } from '../../components/SprintItem';
 import { Task, TaskItem, TaskPriority } from '../../components/TaskItem';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
   // fetch tasks
@@ -10,43 +12,32 @@ const Home = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [sprints, setSprints] = useState<Sprint[]>([]);
 
+  const navigate = useNavigate();
+
+  const checkLogin = () => {
+    const authToken = localStorage.getItem("auth_token");
+    if (!authToken) {
+      navigate("/login");
+    }
+  };
+
   const fetchTasks = async () => {
     setIsLoadingTasks(true);
-    const newTasks = [
-      {
-        id: "1",
-        title: "Task 1",
-        description: "Do something!",
-        priority: TaskPriority.HIGH,
-        estimate: 1,
-        asignee: "Nikola",
-      },
-      {
-        id: "2",
-        title: "Task 2",
-        description: "Do something!",
-        priority: TaskPriority.MEDIUM,
-        estimate: 1,
-        asignee: "Nikola",
-      },
-      {
-        id: "3",
-        title: "Task 3",
-        description: "Do something!",
-      },
-      {
-        id: "4",
-        title: "Task 4",
-        description: "Do something!",
-        priority: TaskPriority.LOW,
-        estimate: 1,
-        asignee: "Nikola",
-      },
-    ];
-    setTimeout(() => {
-      setTasks(newTasks);
-      setIsLoadingTasks(false);
-    }, 1000);
+    try {
+      const { data } = await axios.get("http://localhost:8000/server.php/task");
+      const tasks = data.map((task: any) => ({
+        id: task.id || "",
+        title: task.name || "",
+        description: task.description || "",
+        priority: task.priority || "",
+        estimate: task.estimate || "",
+        asignee: task.asignee || "",
+      }));
+      setTasks(tasks);
+    } catch (e: any) {
+      console.log({ e });
+    }
+    setIsLoadingTasks(false);
   }
   
   const fetchSprints = async () => {
@@ -78,6 +69,7 @@ const Home = () => {
   }
 
   useEffect(() => {
+    checkLogin();
     fetchTasks();
     fetchSprints();
   }, []);

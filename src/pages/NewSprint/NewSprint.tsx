@@ -67,13 +67,14 @@ const NewSprint = () => {
 
   const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await axios.post("http://localhost:8000/server.php", {
-      name: "Nikola",
-    }, {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
+    const formData = new FormData();
+    formData.append("name", "");
+    // const response = await axios.post("http://localhost:8000/server.php/sprint", formData, {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   }
+    // })
+    const response = await axios.get("http://localhost:8000/server.php/users");
     console.log({ response });
   }
 
