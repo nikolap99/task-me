@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
 import styles from './TaskItem.module.scss';
-import { Task, TaskPriority } from './TaskItem.types';
+import { TaskPriority, TaskProps } from './TaskItem.types';
 import { useNavigate } from 'react-router-dom';
-import { DeleteTaskModal } from '../DeleteTaskModal';
+import { DeleteModal } from '../DeleteModal';
+import axios from 'axios';
 
-const TaskItem: React.FC<Task> = ({
+const TaskItem: React.FC<TaskProps> = ({
   id,
   title,
   description,
   priority,
   estimate,
   asignee,
+  onDelete,
 }) => {
   const navigate = useNavigate();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const deleteTask = async () => {
-    console.log("Remove task:");
-    console.log(id);
+    try {
+      const formData = new FormData();
+      formData.append("id", id || "");
+      const { data } = await axios.delete(`http://localhost:8000/server.php/task?id=${id}`);
+      console.log({ data });
+      onDelete && await onDelete();
+    } catch (e: any) {
+      console.log({ e });
+    }
     setIsModalVisible(false);
-  };
+  }
 
   const priorityStyle = priority === TaskPriority.HIGH ? styles.High
     : priority === TaskPriority.MEDIUM
@@ -28,7 +37,7 @@ const TaskItem: React.FC<Task> = ({
   return (
     <div className={styles.TaskItem_Container}>
       {isModalVisible && (
-        <DeleteTaskModal
+        <DeleteModal
           onClose={() => setIsModalVisible(false)}
           onDelete={() => deleteTask()}
         />

@@ -9,18 +9,12 @@
         echo "Request body is empty.";
     } else {
         $name = $input["name"];
-        $description = $input["description"];
-        $priority = $input["priority"];
-        $estimate = $input["estimate"];
-        $asignee = $input["asignee"];
-        $sprint = $input["sprint"];
-        $status = $input["status"];
-        $sql = "INSERT INTO task (name, description, priority, estimate, asignee, sprint, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO sprint (name) VALUES (?)";
         $stmt = mysqli_stmt_init($conn);
         $prepareStatement = mysqli_stmt_prepare($stmt, $sql);
 
         if($prepareStatement) {
-            mysqli_stmt_bind_param($stmt, "sssssss", $name, $description, $priority, $estimate, $asignee, $sprint, $status);
+            mysqli_stmt_bind_param($stmt, "s", $name);
             mysqli_stmt_execute($stmt);
             echo $inputJSON;
         } else {
@@ -33,7 +27,7 @@
     if (isset($_GET["id"])) {
         $id = $_GET["id"];
         $data = array();
-        $sql = "SELECT * FROM task WHERE id = '$id'";
+        $sql = "SELECT * FROM sprint WHERE id = '$id'";
         $result = mysqli_query($conn, $sql);
         $rowCount = mysqli_num_rows($result);
         if ($rowCount  > 0) {
@@ -48,7 +42,7 @@
     } else {
         // Return all tasks
         $data = array();
-        $sql = "SELECT * FROM task";
+        $sql = "SELECT * FROM sprint";
         $result = mysqli_query($conn, $sql);
         $rowCount = mysqli_num_rows($result);
         if ($rowCount  > 0) {                           
@@ -65,9 +59,9 @@
     parse_str($url_components['query'], $params);
     $id = $params["id"];
     $data = array();
-    $sql = "DELETE FROM task WHERE id = '$id'";
+    $sql = "DELETE FROM sprint WHERE id = '$id'";
     $result = mysqli_query($conn, $sql);
-    echo 'Deleted task with ID: '.$id;
+    echo 'Deleted sprint with ID: '.$id;
 } else if ($_SERVER["REQUEST_METHOD"] == "PUT") {
     // Create a new task
     $inputJSON = file_get_contents('php://input');
@@ -78,14 +72,8 @@
     } else {
         $id = $input["id"];
         $name = $input["name"];
-        $description = $input["description"];
-        $priority = $input["priority"];
-        $estimate = $input["estimate"];
-        $asignee = $input["asignee"];
-        $sprint = $input["sprint"];
-        $status = $input["status"];
-        $sql = "UPDATE task
-        SET name = '$name', description = '$description', priority = '$priority', estimate = '$estimate', asignee = '$asignee', sprint = '$sprint', status = '$status'
+        $sql = "UPDATE sprint
+        SET name = '$name'
         WHERE id = '$id'";
         $stmt = mysqli_stmt_init($conn);
         $prepareStatement = mysqli_stmt_prepare($stmt, $sql);

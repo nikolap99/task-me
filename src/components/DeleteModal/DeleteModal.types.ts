@@ -1,7 +1,7 @@
-type DeleteTaskModalProps = {
+type DeleteModalProps = {
   onClose: VoidFunction;
   onDelete: VoidFunction;
   type?: "sprint" | "task";
 }
 
-export type { DeleteTaskModalProps };
+export type { DeleteModalProps };

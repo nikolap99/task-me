@@ -1,30 +1,40 @@
 import React, { useState } from 'react';
 import styles from './SprintItem.module.scss';
-import { Sprint } from './SprintItem.types';
-import { DeleteTaskModal } from '../DeleteTaskModal';
+import { SprintProps } from './SprintItem.types';
+import { DeleteModal } from '../DeleteModal';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const SprintItem: React.FC<Sprint> = ({
+const SprintItem: React.FC<SprintProps> = ({
   id,
   title,
   startDate,
   endDate,
+  onDelete,
 }) => {
   const navigate = useNavigate();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const deleteSprint = async () => {
-    console.log("Remove sprint:");
-    console.log(id);
+    try {
+      const formData = new FormData();
+      formData.append("id", id || "");
+      const { data } = await axios.delete(`http://localhost:8000/server.php/sprint?id=${id}`);
+      console.log({ data });
+      onDelete && await onDelete();
+    } catch (e: any) {
+      console.log({ e });
+    }
     setIsModalVisible(false);
   };
 
   return (
     <div className={styles.SprintItem_Container}>
       {isModalVisible && (
-        <DeleteTaskModal
+        <DeleteModal
           onClose={() => setIsModalVisible(false)}
           onDelete={() => deleteSprint()}
+          type="sprint"
         />
       )}
       <div className={styles.SprintItem} onClick={() => navigate(`/sprints/${id}`)}>

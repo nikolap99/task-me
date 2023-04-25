@@ -1,0 +1,45 @@
+.SingleSprint {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+  border-radius: 10px;
+  background-color: #333;
+
+  &_Item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  &_Button {
+    width: 200px;
+    margin: 0 auto;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #4834d4;
+    color: #fff;
+    transition: all 0.3s;
+
+    &:hover {
+      cursor: pointer;
+      background-color: #5741e0;
+    }
+  }
+
+  &_Button_Disabled {
+    width: 200px;
+    margin: 0 auto;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #7465d8;
+    color: #999;
+    cursor: not-allowed;
+  }
+}

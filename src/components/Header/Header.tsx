@@ -7,6 +7,7 @@ const Header = () => {
 
   const logout = () => {
     localStorage.setItem("auth_token", "");
+    localStorage.setItem("current_user", "");
     navigate("/login");
   };
 

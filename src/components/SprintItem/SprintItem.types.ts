@@ -5,4 +5,8 @@ type Sprint = {
   endDate: string;
 }
 
-export type { Sprint };
+type SprintProps = {
+  onDelete?: () => Promise<void>;
+} & Sprint;
+
+export type { Sprint, SprintProps };

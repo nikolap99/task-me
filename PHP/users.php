@@ -29,6 +29,25 @@
     }
 } else if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // Get all users
-    echo "All users";
-}
+    $data = array();
+    $sql = "SELECT * FROM users";
+    $result = mysqli_query($conn, $sql);
+    $rowCount = mysqli_num_rows($result);
+    if ($rowCount  > 0) {                           
+        while($row = $result->fetch_assoc()) {
+            $data[] = $row; 
+        }
+        }
+    echo json_encode($data);
+} else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
+    // Delete a task by id
+    $url = $_SERVER['REQUEST_URI'];
+    $url_components = parse_url($url);
+    parse_str($url_components['query'], $params);
+    $id = $params["id"];
+    $data = array();
+    $sql = "DELETE FROM users WHERE id = '$id'";
+    $result = mysqli_query($conn, $sql);
+    echo 'Deleted user with ID: '.$id;
+} 
 ?>

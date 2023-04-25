@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import styles from './NewTask.module.scss';
+import styles from './SingleTask.module.scss';
 import { TextField } from '../../components/TextField';
 import { TaskPriority, TaskStatus } from '../../components/TaskItem';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 type FormType = "title" | "description" | "priority" | "estimate" | "asignee" | "status";
 
-const NewTask = () => {
+const SingleTask = () => {
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -20,6 +21,7 @@ const NewTask = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const { taskId } = useParams();
 
   const updateForm = (formId: FormType, value: string) => {
     const newForm = {...form};
@@ -32,10 +34,27 @@ const NewTask = () => {
     }
   };
 
-  const handleCreateTask = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFetchTask = async () => {
+    setIsLoading(true);
+    const { data } = await axios.get(`http://localhost:8000/server.php/task?id=${taskId}`);
+    const { name: title, description, priority, estimate, asignee, sprint, status } = data;
+    setForm({
+      title,
+      description,
+      priority,
+      estimate,
+      asignee,
+      sprint,
+      status,
+    })
+    setIsLoading(false);
+  }
+
+  const handleUpdateTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData();
 
+    formData.append("id", `${taskId}`);
     formData.append("name", form.title);
     formData.append("description", form.description);
     formData.append("priority", form.priority);
@@ -45,21 +64,12 @@ const NewTask = () => {
     formData.append("status", form.status);
     try {
       setIsLoading(true);
-      const { data } = await axios.post("http://localhost:8000/server.php/task", formData, {
+      const { data } = await axios.put(`http://localhost:8000/server.php/task?id=${taskId}`, formData, {
         headers: {
           "Content-Type": "application/json",
         }
       });
-      setSuccessMessage("Task created.");
-      setForm({
-        title: "",
-        description: "",
-        priority: "",
-        estimate: "",
-        asignee: "",
-        sprint: "",
-        status: "",
-      });
+      setSuccessMessage("Task updated.");
       setIsFormValid(false);
     } catch (e: any) {
       console.log({ e });
@@ -84,18 +94,20 @@ const NewTask = () => {
   }
 
   useEffect(() => {
+    handleFetchTask();
     fetchMembers();
   }, []);
 
   return (
-    <form className={styles.NewTask} onSubmit={(e) => handleCreateTask(e)}>
-      <h2>Create New Task</h2>
-      <div className={styles.NewTask_Form}>
+    <form className={styles.SingleTask} onSubmit={(e) => handleUpdateTask(e)}>
+      <h2>Update Task #{taskId}</h2>
+      <div className={styles.SingleTask_Form}>
         <TextField placeholder='Title...' onChange={(value) => updateForm("title", value)} value={form["title"]} />
         <TextField placeholder='Description...' onChange={(value) => updateForm("description", value)} value={form["description"] || ""} />
         <select
-          className={form["priority"] ? styles.NewTask_Select : styles.NewTask_SelectPlaceholder}
+          className={form["priority"] ? styles.SingleTask_Select : styles.SingleTask_SelectPlaceholder}
           onChange={(e) => updateForm("priority", e.target.value)}
+          value={form["priority"]}
         >
           <option value="">Priority...</option>
           <option value={TaskPriority.HIGH}>{TaskPriority.HIGH}</option>
@@ -104,16 +116,18 @@ const NewTask = () => {
         </select>
         <TextField placeholder='Estimate...' onChange={(value) => updateForm("estimate", value)} value={form["estimate"] || ""} type="number" />
         <select
-          className={form["asignee"] ? styles.NewTask_Select : styles.NewTask_SelectPlaceholder}
+          className={form["asignee"] ? styles.SingleTask_Select : styles.SingleTask_SelectPlaceholder}
           onChange={(e) => updateForm("asignee", e.target.value)}
           disabled={isLoading || members.length === 0}
+          value={form["asignee"]}
         >
           <option value="">{members.length > 0 ? "Asignee..." : "Loading..."}</option>
           {members.length > 0 && members.map((member: any) => <option value={member.email}>{member.email}</option>)}
         </select>
         <select
-          className={form["status"] ? styles.NewTask_Select : styles.NewTask_SelectPlaceholder}
+          className={form["status"] ? styles.SingleTask_Select : styles.SingleTask_SelectPlaceholder}
           onChange={(e) => updateForm("status", e.target.value)}
+          value={form["status"]}
         >
           <option value="">Status...</option>
           <option value={TaskStatus.TO_DO}>{TaskStatus.TO_DO}</option>
@@ -123,15 +137,15 @@ const NewTask = () => {
         </select>
       </div>
       <button 
-        className={(!isFormValid || isLoading) ? styles.NewTask_Button_Disabled : styles.NewTask_Button}
+        className={(!isFormValid || isLoading) ? styles.SingleTask_Button_Disabled : styles.SingleTask_Button}
         type='submit'
         disabled={isLoading}
       >
-        {!isLoading ? "Create Task" : "Creating..."}
+        {!isLoading ? "Update Task" : "Updating..."}
       </button>
       {successMessage && <p>{successMessage}</p>}
     </form>
   );
 }
 
-export { NewTask };
+export { SingleTask };

@@ -18,6 +18,13 @@
     border-bottom: 1px solid #444;
   }
 
+  &_EndContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
   &_Delete {
     background-color: #e74c3c;
     height: 20px;

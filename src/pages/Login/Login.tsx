@@ -32,6 +32,7 @@ const Login = () => {
       })
       setLoginErrorMessage("");
       localStorage.setItem("auth_token", data);
+      localStorage.setItem("current_user", loginEmail);
       navigate("/");
       console.log({ data });
     } catch (e: any) {
@@ -54,6 +55,7 @@ const Login = () => {
         }
       });
       localStorage.setItem("auth_token", data);
+      localStorage.setItem("current_user", registerEmail);
       navigate("/");
     } catch (e: any) {
       setRegisterErrorMessage(e.response.data);

@@ -1,3 +1,10 @@
+enum TaskStatus {
+  TO_DO = "TO_DO",
+  IN_PROGRESS = "IN_PROGRESS",
+  IN_REVIEW = "IN_REVIEW",
+  DONE = "DONE",
+}
+
 enum TaskPriority {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
@@ -11,7 +18,12 @@ type Task = {
   priority?: TaskPriority;
   estimate?: number;
   asignee?: string;
+  status?: string;
 }
 
-export type { Task };
-export { TaskPriority };
+type TaskProps = {
+  onDelete?: () => Promise<void>;
+} & Task;
+
+export type { Task, TaskProps };
+export { TaskPriority, TaskStatus };

@@ -1,26 +1,36 @@
 import React, { useState } from 'react';
 import styles from './MemberItem.module.scss';
 import { MemberItemProps } from './MemberItem.types';
-import { DeleteTaskModal } from '../DeleteTaskModal';
+import { DeleteModal } from '../DeleteModal';
+import axios from 'axios';
 
 const MemberItem: React.FC<MemberItemProps> = ({
   id,
   email,
   firstName,
   lastName,
+  priviledge,
+  onDelete,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const deleteMember = async () => {
-    console.log("Remove member:");
-    console.log(id);
-    setIsModalVisible(false)
-  };
+    try {
+      const formData = new FormData();
+      formData.append("id", id || "");
+      const { data } = await axios.delete(`http://localhost:8000/server.php/users?id=${id}`);
+      console.log({ data });
+      onDelete && await onDelete();
+    } catch (e: any) {
+      console.log({ e });
+    }
+    setIsModalVisible(false);
+  }
 
   return (
     <div className={styles.MemberItem_Container}>
       {isModalVisible && (
-        <DeleteTaskModal
+        <DeleteModal
           onClose={() => setIsModalVisible(false)}
           onDelete={() => deleteMember()}
         />
@@ -30,10 +40,13 @@ const MemberItem: React.FC<MemberItemProps> = ({
         <p>|</p>
         <p>{email}</p>
       </div>
-      <button
-        className={styles.MemberItem_Delete}
-        onClick={() => setIsModalVisible(true)}
-      >X</button>
+      <div className={styles.MemberItem_EndContainer}>
+        {priviledge && <p>{priviledge}</p>}
+        <button
+          className={styles.MemberItem_Delete}
+          onClick={() => setIsModalVisible(true)}
+        >X</button>
+      </div>
     </div>
   );
 }

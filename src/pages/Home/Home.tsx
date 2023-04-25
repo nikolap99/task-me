@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './Home.module.scss';
 import { Sprint, SprintItem } from '../../components/SprintItem';
-import { Task, TaskItem, TaskPriority } from '../../components/TaskItem';
+import { Task, TaskItem } from '../../components/TaskItem';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -16,7 +16,8 @@ const Home = () => {
 
   const checkLogin = () => {
     const authToken = localStorage.getItem("auth_token");
-    if (!authToken) {
+    const currentUser = localStorage.getItem("current_user");
+    if (!authToken || !currentUser) {
       navigate("/login");
     }
   };
@@ -42,30 +43,17 @@ const Home = () => {
   
   const fetchSprints = async () => {
     setIsLoadingSprints(true);
-    const newSprints = [
-      {
-        id: "1",
-        title: "APR Sprint 22-27",
-        startDate: 'Apr 22 2023',
-        endDate: 'Apr 27 2023',
-      },
-      {
-        id: "2",
-        title: "APR Sprint 15-22",
-        startDate: 'Apr 15 2023',
-        endDate: 'Apr 22 2023',
-      },
-      {
-        id: "3",
-        title: "APR Sprint 08-15",
-        startDate: 'Apr 08 2023',
-        endDate: 'Apr 15 2023',
-      },
-    ];
-    setTimeout(() => {
-      setSprints(newSprints);
-      setIsLoadingSprints(false);
-    }, 1000);
+    try {
+      const { data } = await axios.get("http://localhost:8000/server.php/sprint");
+      const sprints = data.map((sprint: any) => ({
+        id: sprint.id || "",
+        title: sprint.name || "",
+      }));
+      setSprints(sprints);
+    } catch (e: any) {
+      console.log({ e });
+    }
+    setIsLoadingSprints(false);
   }
 
   useEffect(() => {
@@ -80,13 +68,13 @@ const Home = () => {
       <div>
         {isLoadingTasks && "Loading tasks..."}
         {!isLoadingTasks && tasks.length === 0 && "No tasks."}
-        {!isLoadingTasks && tasks.length > 0 && tasks.map(task => <TaskItem key={task.id} {...task} />)}
+        {!isLoadingTasks && tasks.length > 0 && tasks.map(task => <TaskItem key={task.id} {...task} onDelete={fetchTasks} />)}
       </div>
       <h2>All Sprints</h2>
       <div>
         {isLoadingSprints && "Loading sprints..."}
         {!isLoadingSprints && sprints.length === 0 && "No sprints."}
-        {!isLoadingSprints && sprints.length > 0 && sprints.map(sprint => <SprintItem key={sprint.id} {...sprint} />)}
+        {!isLoadingSprints && sprints.length > 0 && sprints.map(sprint => <SprintItem key={sprint.id} {...sprint} onDelete={fetchSprints} />)}
       </div>
     </div>
   );
